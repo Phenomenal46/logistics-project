@@ -1,0 +1,14 @@
+/*
+ * styles.css
+ * Purpose: Tailwind entry point plus tiny base styles.
+ * Why it exists: Tailwind needs its directives to generate CSS utilities.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Keep the UI clean and readable without fancy styling. */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
