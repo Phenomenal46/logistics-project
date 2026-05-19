@@ -71,18 +71,13 @@ Relationships:
 - Inventory is released if the shipment is cancelled before pickup.
 - Inventory is returned if the shipment is returned.
 
-## Concurrency and correctness (simple explanation)
+## Concurrency and correctness 
 - **Node.js concurrency**: Node uses an event loop and non-blocking I/O, so it can serve many API requests without one slow request blocking all others.
 - **Transactions**: Shipment creation and inventory reservation happen inside a single transaction so they succeed or fail together.
 - **Row locking**: Inventory rows are locked with SELECT ... FOR UPDATE so two requests cannot reserve the same stock at the same time.
 - **Status conflicts**: Status updates check the current status and block invalid transitions. The optional expectedCurrentStatus adds a simple optimistic check.
 - **Indexes**: Tracking number, status, and foreign key columns are indexed for fast searches.
 
-## Why this is a strong interview project
-- Shows realistic logistics logic (status flows, reservations, tracking).
-- Demonstrates concurrency safety with transactions and row locks.
-- Has a clean REST API and clean React UI.
-- Explains tradeoffs and limitations clearly, like a real engineer.
 
 ## Edge cases handled
 - Insufficient inventory returns a clear error.
@@ -105,28 +100,3 @@ Relationships:
 - Caching for tracking lookups.
 - Background jobs for status automation.
 
-## How to explain this project in an interview
-- "I built a logistics system with real shipment status rules and inventory reservation."
-- "I use PostgreSQL transactions and row locks to avoid double-reserving stock."
-- "Every status change creates a history record so tracking is reliable."
-- "I added indexes and pagination to keep API responses fast and small."
-- "I kept the UI simple but functional to show the logistics flow clearly."
-
-## Required concept explanations
-### Why the shipment history table is separate
-Shipment history grows over time and needs to store every change. Keeping it in a separate table keeps the shipments table small and fast for common queries.
-
-### Why transaction handling is necessary
-Creating a shipment and reserving inventory must happen together. Transactions make sure we never create a shipment without reserving stock (or reserve stock without a shipment).
-
-### Why invalid status changes are blocked
-Logistics is a strict flow. Blocking invalid jumps prevents the data from becoming unrealistic or impossible to explain.
-
-### Why indexes help
-Indexes let PostgreSQL find tracking numbers and status filters quickly without scanning every row. This matters a lot as data grows.
-
-### Tradeoffs with concurrency control
-Row locks keep data correct but reduce parallelism on the same SKU. This is a good tradeoff for correctness in a small system.
-
-### Limitations of this simple version
-This project focuses on correctness and clarity. A large-scale system would include advanced routing, multiple carriers, real-time updates, and more complex inventory logic.
